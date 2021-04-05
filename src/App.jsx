@@ -1,5 +1,5 @@
 import React, { useEffect, Suspense } from 'react';
-import { BrowserRouter, Route, withRouter } from "react-router-dom";
+import { HashRouter, Route, withRouter } from "react-router-dom";
 import Settings from "./components/Settings/Settings";
 import Music from "./components/Music/Music";
 import News from "./components/News/News";
@@ -65,10 +65,10 @@ const AppContainer = compose(
 
 export default function SocialApp() {
     return (
-        <BrowserRouter>
+        <HashRouter basename={process.env.PUBLIC_URL}>
             <Provider store={store}>
                 <AppContainer/>
             </Provider>
-        </BrowserRouter>
+        </HashRouter>
     )
 }
