@@ -65,7 +65,7 @@ const AppContainer = compose(
 
 export default function SocialApp() {
     return (
-        <HashRouter basename={process.env.PUBLIC_URL}>
+        <HashRouter>
             <Provider store={store}>
                 <AppContainer/>
             </Provider>
