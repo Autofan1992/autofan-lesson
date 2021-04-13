@@ -1,26 +1,22 @@
-import {useState, useEffect} from 'react'
+import { useState, useEffect } from 'react'
 import styles from './ProfileInfo.module.scss'
-import {connect} from "react-redux"
-import {withRouter} from "react-router-dom";
-import {compose} from "redux";
-import {getAuthUserID, getIsAuth} from "../../../redux/selectors/auth-selectors";
 
-function ProfileStatusWithHooks(props) {
+function ProfileStatus({ status, statusChangeResult, isOwner, updateUserStatus }) {
 
     const [editMode, setEditMode] = useState(false)
     const [currentStatus, setStatus] = useState('')
 
     useEffect(() => {
-        setStatus(props.status)
-    }, [props.status])
+        setStatus(status)
+    }, [status])
 
     const toggleEditMode = () => {
         setEditMode(!editMode)
     }
 
     const handleStatusUpdate = () => {
-        if (currentStatus !== props.status) {
-            props.updateUserStatus(currentStatus)
+        if (currentStatus !== status) {
+            updateUserStatus(currentStatus)
         }
         toggleEditMode()
     }
@@ -31,9 +27,9 @@ function ProfileStatusWithHooks(props) {
 
     return (
         <div className={styles.profileStatus}>
-            {props.statusChangeResult !== null
-            && <div>
-                {!props.statusChangeResult
+            {statusChangeResult &&
+            <div>
+                {!statusChangeResult
                     ? <div className="alert alert-danger" role="alert">
                         Что-то пошло не так!
                     </div>
@@ -41,13 +37,14 @@ function ProfileStatusWithHooks(props) {
                         Статус успешно изменён!
                     </div>
                 }
-            </div>}
+            </div>
+            }
 
             <div className="d-flex"><p className="fw-bold">Статус:&nbsp;</p>
                 <div className={styles.statusBlock}>
                     <div>
-                        <span>{props.status}&nbsp;</span>
-                        {((props.isAuth && (Number(props.match.params.userId) === props.authorisedUserID)) || (props.match.params.userId === undefined)) &&
+                        <span>{status}&nbsp;</span>
+                        {isOwner &&
                         <button
                             className="btn btn-secondary d-inline-flex align-items-center ms-2"
                             onClick={toggleEditMode}>
@@ -59,8 +56,8 @@ function ProfileStatusWithHooks(props) {
                         </button>
                         }
                     </div>
-                    {editMode
-                    && <div className={styles.forInput}>
+                    {editMode &&
+                    <div className={styles.forInput}>
                         <input type="text" value={currentStatus} onBlur={handleStatusUpdate}
                                onChange={handleStatusChange} autoFocus={true}/>
                     </div>
@@ -70,12 +67,4 @@ function ProfileStatusWithHooks(props) {
         </div>
     )
 }
-
-const mapStateToProps = state => ({
-    isAuth: getIsAuth(state),
-    authorisedUserID: getAuthUserID(state),
-})
-export default compose(
-    connect(mapStateToProps),
-    withRouter
-)(ProfileStatusWithHooks)
+export default ProfileStatus

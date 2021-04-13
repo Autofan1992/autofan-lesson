@@ -84,10 +84,10 @@ export const toggleAllTodo = () => ({
 
 export const deleteTodo = (id) => ({
     type: DELETE_TODO,
-    id: id
+    id
 })
 
-export const updateTodoStatus = (id = 1) => ({
+export const updateTodoStatus = (id) => ({
     type: UPDATE_TODO_STATUS,
     id
 })

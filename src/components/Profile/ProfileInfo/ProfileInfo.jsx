@@ -1,10 +1,10 @@
 import styles from './ProfileInfo.module.scss';
 import Preloader from "../../common/preloader/Preloader";
-import profileThumbnailBig from "../../../images/profile-thumbnail-big.jpg";
-import thumbnail from "./../../../images/profile-thumbnail-big.jpg";
-import ProfileStatusWithHooks from "./ProfileStatusWithHooks";
+import profileThumbnailBig from "../../../../src/images/profile-thumbnail.jpg";
+import ProfileStatusWithHooks from "./ProfileStatus";
+import ProfileAvatar from "./ProfileAvatar";
 
-const ProfileInfo = ({ profile, userID, status, updateUserStatus, statusChangeResult }) => {
+const ProfileInfo = ({ profile, userID, isOwner, status, updateUserStatus, statusChangeResult, updateUserAvatar }) => {
 
     if (!profile) {
         return <Preloader/>
@@ -17,11 +17,14 @@ const ProfileInfo = ({ profile, userID, status, updateUserStatus, statusChangeRe
             </div>
             <div className={styles.authorInfo}>
                 <div className={styles.topInfo}>
-                    <div className={styles.avatar}>
-                        <img src={profile.photos.large || thumbnail} alt=""/>
-                    </div>
+                    <ProfileAvatar
+                        isOwner={isOwner}
+                        avatar={profile.photos.large}
+                        savePhoto={updateUserAvatar}
+                    />
                     <div className={styles.infoBlock}>
                         <ProfileStatusWithHooks
+                            isOwner={isOwner}
                             userID={userID} status={status}
                             statusChangeResult={statusChangeResult}
                             updateUserStatus={updateUserStatus}

@@ -7,12 +7,15 @@ const LIKE_POST = 'PROFILE/LIKE_POST'
 const SET_USER_PROFILE = 'PROFILE/SET_USER_PROFILE'
 const SET_USER_STATUS = 'PROFILE/SET_USER_STATUS'
 const SET_CHANGE_STATUS_RESULT_CODE = 'PROFILE/SET_CHANGE_STATUS_RESULT_CODE'
+const SET_PHOTO_SUCCESS = 'PROFILE/SET_PHOTO_SUCCESS'
+const SET_AVATAR_RESULT_CODE = 'PROFILE/SET_AVATAR_RESULT_CODE'
 
 let initialState = {
     posts: [],
     profile: null,
     status: null,
-    statusChangeResult: null
+    statusChangeResult: undefined,
+    avatarChangeResult: undefined
 }
 
 const profileReducer = (state = initialState, action) => {
@@ -56,6 +59,11 @@ const profileReducer = (state = initialState, action) => {
                 ...state,
                 statusChangeResult: action.resultCode
             }
+        case SET_PHOTO_SUCCESS:
+            return {
+                ...state,
+                profile: {...state.profile, photos: action.avatar}
+            }
         default:
             return state
     }
@@ -91,14 +99,14 @@ export const getUserProfile = userId => async dispatch => {
     dispatch(setUserProfile(response.data))
 }
 
-const setUserStatus = status => ({
+const setStatusSuccess = status => ({
     type: SET_USER_STATUS,
     status
 })
 
 export const getUserStatus = userId => async dispatch => {
     let response = await profileAPI.getStatus(userId)
-    dispatch(setUserStatus(response.data))
+    dispatch(setStatusSuccess(response.data))
 }
 
 const setChangeStatusResponse = resultCode => ({
@@ -110,7 +118,7 @@ export const updateUserStatus = status => async dispatch => {
     try {
         let response = await profileAPI.setStatus(status)
         if (response.data.resultCode === 0) {
-            dispatch(setUserStatus(status))
+            dispatch(setStatusSuccess(status))
             dispatch(setChangeStatusResponse(true))
         }
     } catch (e) {
@@ -118,7 +126,34 @@ export const updateUserStatus = status => async dispatch => {
         dispatch(setChangeStatusResponse(false))
     } finally {
         setTimeout(function () {
-            dispatch(setChangeStatusResponse(null))
+            dispatch(setChangeStatusResponse(undefined))
+        }, 3000)
+    }
+}
+
+const setAvatarSuccess = avatar => ({
+    type: SET_PHOTO_SUCCESS,
+    avatar
+})
+
+const setChangeAvatarResponse = resultCode => ({
+    type: SET_AVATAR_RESULT_CODE,
+    resultCode,
+})
+
+export const updateUserAvatar = avatar => async dispatch => {
+    try {
+        let response = await profileAPI.setAvatar(avatar)
+        if (response.data.resultCode === 0) {
+            dispatch(setAvatarSuccess(response.data.data.photos))
+            dispatch(setChangeAvatarResponse(true))
+        }
+    } catch (e) {
+        console.warn(e)
+        dispatch(setChangeAvatarResponse(false))
+    } finally {
+        setTimeout(function () {
+            dispatch(setChangeAvatarResponse(undefined))
         }, 3000)
     }
 }
